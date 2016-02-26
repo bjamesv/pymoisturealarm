@@ -37,7 +37,7 @@ def listen():
     """
     port = 8000
     handler = MoistureHandler
-    httpd = SocketServer.TCPServer(("", port), handler)
+    httpd = SocketServer.TCPServer(("0.0.0.0", port), handler)
     print "serving at port", port
     httpd.serve_forever()
 
