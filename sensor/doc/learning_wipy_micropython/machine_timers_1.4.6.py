@@ -30,19 +30,21 @@ tim_a = None #still blinking
 tim.channel( tim.A, freq=5) #stopped blinking
 
 #reinitialize, for a slower blink
-tim.init(mode=Timer.PERIODIC, width=32)
-tim_a = tim.channel( tim.A, freq=4) #does not work
+tim.deinit()
+#tim.init(mode=Timer.PERIODIC, width=32)#terminal froze.
+tim = Timer(4,mode=Timer.PERIODIC, width=32)
+tim_ab = tim.channel( Timer.A | Timer.B, freq=4) #does not work
+tim_ab.irq(handler=blink) #does not start blinking
 
-#seems to re-enable the timer channel & useful event?
-tim_a = tim.channel( tim.A, freq=5)
-tim_a.irq(handler=blink) #starts blinking
+seconds = 2 * 1000 * 1000
+tim_ab = tim.channel( Timer.A | Timer.B, period=seconds)
+tim_ab.irq(handler=blink) #does not start blinking
 
-tim.channel( tim.A, freq=5)#stops blinking
-tim_a = tim.channel( tim.A, freq=8)#does not blink
-tim_a.irq(handler=blink) #starts blinking, faster now
+tim.deinit()
+tim = Timer(1, mode=Timer.PERIODIC, width=32)
+tim_ab = tim.channel( Timer.A | Timer.B, period=seconds) #works! perhaps issue is with Timer 4?
+tim_ab.irq(handler=blink)
 
-tim_a = tim.channel( tim.A, freq=5)#stops blinking
-tim_a.irq(handler=blink) #starts blinking, now at the slow blink
+seconds = 13 * 1000 * 1000
+tim_ab = tim.channel( Timer.A | Timer.B, period=seconds) #rate slowed to every 13 seconds
 
-#TODO: figure out how events <5Hz work!
-#tim_ab = tim.channel( tim.A|tim.B, freq=4) does not seem to work, even with width=32?
